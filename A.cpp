@@ -14,7 +14,7 @@ vector<pair<int, int>> array;
 
 struct comp {
     bool operator() (const int &a, const int &b) {
-        return array[a].second < array[b].second;
+        return a > b;
     }
 };
 
@@ -25,31 +25,25 @@ int main() {
 
     cin >> n;
 
+    vector<pair<int, int>> dead;
+    
     for (int i = 0; i < n; ++i) {
         int d_temp, w_temp;
         cin >> d_temp >> w_temp;
-        array.emplace_back(d_temp, w_temp);
+        dead.emplace_back(d_temp, w_temp);
     }
-    sort(array.begin(), array.end(), [](pair<int, int> a, pair<int, int> b) { return (a.first < b.first); });
+    sort(dead.begin(), dead.end(), [](pair<int, int> a, pair<int, int> b) { return (a.first < b.first); });
 
+    priority_queue<int, vector<int>, comp>queue;
+    long long answer = 0;
 
-    priority_queue<int, vector<int>, comp>deadlines;
-
-    long ans = 0;
-    int curTime = 1;
-    for (int i = 0; i < n; ++i) {
-
-        if (array[i].first == 0) {
-            ans += array[i].second;
-            continue;
-        }
-        deadlines.push(array[i].second);
-        if (array[i].first >= curTime) {
-            curTime++;
-        } else {
-            ans += array[deadlines.top()].second;
-            deadlines.pop();
+    for (int i = 0; i < n; i++) {
+        queue.push(dead[i].second);
+        if (dead[i].first < queue.size()){
+            int temp = queue.top();
+            answer += temp;
+            queue.pop();
         }
     }
-    cout << ans;
+    cout << answer;
 }
